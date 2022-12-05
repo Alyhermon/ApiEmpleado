@@ -24,21 +24,23 @@ namespace WebApi.Controllers
         }
 
         // POST api/<controller>
-        public bool Post([FromBody]Usuario oUsuario)
+        public bool Post([FromBody] Usuario empleados)
         {
-            return UsuarioData.Registrar(oUsuario);
+            return UsuarioData.Registrar(empleados);
         }
 
         // PUT api/<controller>/5
-        public bool Put([FromBody]Usuario oUsuario)
+        public bool Put([FromBody] Usuario empleados)
         {
-            return UsuarioData.Modificar(oUsuario);
+            return UsuarioData.Modificar(empleados);
         }
 
         // DELETE api/<controller>/5
         public bool Delete(int id)
         {
             return UsuarioData.Eliminar(id);
+
         }
+            
     }
 }

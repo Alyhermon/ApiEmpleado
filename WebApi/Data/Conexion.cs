@@ -7,6 +7,6 @@ namespace WebApi.Data
 {
     public class Conexion
     {
-        public static string rutaConexion = "Data Source=.;Initial Catalog=DBPRUEBAS;Integrated Security=True";
+        public static string conexion = "Data Source=.;Initial Catalog=apiEmpleado;Integrated Security=True";
     }
 }

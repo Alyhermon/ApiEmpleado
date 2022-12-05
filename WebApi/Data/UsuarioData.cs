@@ -10,17 +10,22 @@ namespace WebApi.Data
 {
     public class UsuarioData
     {
-        public static bool Registrar(Usuario oUsuario)
+        public static bool Registrar(Usuario empleado)
         {
-            using (SqlConnection oConexion = new SqlConnection(Conexion.rutaConexion))
+
+            using (SqlConnection oConexion = new SqlConnection(Conexion.conexion))
             {
-                SqlCommand cmd = new SqlCommand("usp_registrar", oConexion);
+                SqlCommand cmd = new SqlCommand("ep_agregar", oConexion);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@documentoidentidad", oUsuario.DocumentoIdentidad);
-                cmd.Parameters.AddWithValue("@nombres", oUsuario.Nombres);
-                cmd.Parameters.AddWithValue("@telefono", oUsuario.Telefono);
-                cmd.Parameters.AddWithValue("@correo", oUsuario.Correo);
-                cmd.Parameters.AddWithValue("@ciudad", oUsuario.Ciudad);
+                cmd.Parameters.AddWithValue("@Cedula", empleado.Cedula);
+                cmd.Parameters.AddWithValue("@nombre", empleado.Nombre);
+                cmd.Parameters.AddWithValue("@apellido", empleado.Apellido);
+                cmd.Parameters.AddWithValue("@fechaNacimiento", empleado.fechaNacimiento);
+                cmd.Parameters.AddWithValue("@cargo", empleado.Cargo);
+                cmd.Parameters.AddWithValue("@departamento", empleado.Departamento);
+                cmd.Parameters.AddWithValue("@horarioTrabajo", empleado.HorarioTrabajo);
+                cmd.Parameters.AddWithValue("@telefono", empleado.Telefono);
+                cmd.Parameters.AddWithValue("@correo", empleado.correo);
 
                 try
                 {
@@ -28,25 +33,36 @@ namespace WebApi.Data
                     cmd.ExecuteNonQuery();
                     return true;
                 }
+
                 catch (Exception ex)
                 {
                     return false;
                 }
+
             }
+
         }
 
-        public static bool Modificar(Usuario oUsuario)
+        //Metodo modificar
+
+        public static bool Modificar(Usuario empleado)
         {
-            using (SqlConnection oConexion = new SqlConnection(Conexion.rutaConexion))
+
+            using (SqlConnection oConexion = new SqlConnection(Conexion.conexion))
             {
-                SqlCommand cmd = new SqlCommand("usp_modificar", oConexion);
+
+                SqlCommand cmd = new SqlCommand("ep_modificar", oConexion);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@idusuario", oUsuario.IdUsuario);
-                cmd.Parameters.AddWithValue("@documentoidentidad", oUsuario.DocumentoIdentidad);
-                cmd.Parameters.AddWithValue("@nombres", oUsuario.Nombres);
-                cmd.Parameters.AddWithValue("@telefono", oUsuario.Telefono);
-                cmd.Parameters.AddWithValue("@correo", oUsuario.Correo);
-                cmd.Parameters.AddWithValue("@ciudad", oUsuario.Ciudad);
+                cmd.Parameters.AddWithValue("@id", empleado.Id);
+                cmd.Parameters.AddWithValue("@cedula", empleado.Cedula);
+                cmd.Parameters.AddWithValue("@nombre", empleado.Nombre);
+                cmd.Parameters.AddWithValue("@telefono", empleado.Apellido);
+                cmd.Parameters.AddWithValue("@fechaNacimiento", empleado.fechaNacimiento);
+                cmd.Parameters.AddWithValue("@cargo", empleado.Cargo);
+                cmd.Parameters.AddWithValue("@departamento", empleado.Departamento);
+                cmd.Parameters.AddWithValue("@horarioTrabajo", empleado.HorarioTrabajo);
+                cmd.Parameters.AddWithValue("@telefono", empleado.Telefono);
+                cmd.Parameters.AddWithValue("@correo", empleado.correo);
 
                 try
                 {
@@ -54,118 +70,142 @@ namespace WebApi.Data
                     cmd.ExecuteNonQuery();
                     return true;
                 }
+
                 catch (Exception ex)
                 {
                     return false;
                 }
+
             }
+
         }
+
+        //Metodo Listar
 
         public static List<Usuario> Listar()
         {
-            List<Usuario> oListaUsuario = new List<Usuario>();
-            using (SqlConnection oConexion = new SqlConnection(Conexion.rutaConexion))
+            List<Usuario> lista = new List<Usuario>();
+            using (SqlConnection oConexion = new SqlConnection(Conexion.conexion))
             {
-                SqlCommand cmd = new SqlCommand("usp_listar", oConexion);
+                SqlCommand cmd = new SqlCommand("ep_listar", oConexion);
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 try
                 {
-                    oConexion.Open();
-                    cmd.ExecuteNonQuery();
 
-                    using (SqlDataReader dr = cmd.ExecuteReader()) {
-                        
-                        while (dr.Read())
-                        {
-                            oListaUsuario.Add(new Usuario() {
-                                IdUsuario = Convert.ToInt32(dr["IdUsuario"]),
-                                DocumentoIdentidad = dr["DocumentoIdentidad"].ToString(),
-                                Nombres = dr["Nombres"].ToString(),
-                                Telefono = dr["Telefono"].ToString(),
-                                Correo = dr["Correo"].ToString(),
-                                Ciudad = dr["Ciudad"].ToString(),
-                                FechaRegistro = Convert.ToDateTime(dr["FechaRegistro"].ToString())
-                            });
-                        }
-
-                    }
-
-
-
-                    return oListaUsuario;
-                }
-                catch (Exception ex)
-                {
-                    return oListaUsuario;
-                }
-            }
-        }
-
-        public static Usuario Obtener(int idusuario)
-        {
-            Usuario oUsuario = new Usuario();
-            using (SqlConnection oConexion = new SqlConnection(Conexion.rutaConexion))
-            {
-                SqlCommand cmd = new SqlCommand("usp_obtener", oConexion);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@idusuario", idusuario);
-
-                try
-                {
                     oConexion.Open();
                     cmd.ExecuteNonQuery();
 
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
-
                         while (dr.Read())
                         {
-                            oUsuario = new Usuario()
-                            {
-                                IdUsuario = Convert.ToInt32(dr["IdUsuario"]),
-                                DocumentoIdentidad = dr["DocumentoIdentidad"].ToString(),
-                                Nombres = dr["Nombres"].ToString(),
-                                Telefono = dr["Telefono"].ToString(),
-                                Correo = dr["Correo"].ToString(),
-                                Ciudad = dr["Ciudad"].ToString(),
-                                FechaRegistro = Convert.ToDateTime(dr["FechaRegistro"].ToString())
-                            };
-                        }
 
+
+                            lista.Add(new Usuario()
+                            {
+                                Id = Convert.ToInt32(dr["Id"]),
+                                Cedula = dr["Cedula"].ToString(),
+                                Nombre = dr["Nombre"].ToString(),
+                                Apellido = dr["Apellido"].ToString(),
+                                fechaNacimiento = dr["FechaNacimiento"].ToString(),
+                                Cargo = dr["cargo"].ToString(),
+                                Departamento = dr["departamento"].ToString(),
+                                HorarioTrabajo = dr["horarioTrabajo"].ToString(),
+                                Telefono = dr["telefono"].ToString(),
+                                correo = dr["correo"].ToString(),
+
+
+                            });
+
+                        }
                     }
 
-
-
-                    return oUsuario;
+                    return lista;
                 }
                 catch (Exception ex)
                 {
-                    return oUsuario;
+                    return lista;
                 }
+
+
+            }
+        }
+
+        public static Usuario Obtener(int id)
+        {
+            Usuario oEmpleados = new Usuario();
+            using (SqlConnection oConexion = new SqlConnection(Conexion.conexion))
+            {
+                SqlCommand cmd = new SqlCommand("ep_obtener", oConexion);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@id", id);
+
+                try
+                {
+
+                    oConexion.Open();
+                    cmd.ExecuteNonQuery();
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+
+
+                            oEmpleados = new Usuario()
+                            {
+                                Id = Convert.ToInt32(dr["Id"]),
+                                Cedula = dr["Cedula"].ToString(),
+                                Nombre = dr["Nombre"].ToString(),
+                                Apellido = dr["Apellido"].ToString(),
+                                fechaNacimiento = dr["FechaNacimiento"].ToString(),
+                                Cargo = dr["cargo"].ToString(),
+                                Departamento = dr["departamento"].ToString(),
+                                HorarioTrabajo = dr["horarioTrabajo"].ToString(),
+                                Telefono = dr["telefono"].ToString(),
+                                correo = dr["correo"].ToString(),
+
+
+                            };
+
+                        }
+                    }
+
+                    return oEmpleados;
+                }
+                catch (Exception ex)
+                {
+                    return oEmpleados;
+                }
+
             }
         }
 
         public static bool Eliminar(int id)
         {
-            using (SqlConnection oConexion = new SqlConnection(Conexion.rutaConexion))
+            using (SqlConnection oConexion = new SqlConnection(Conexion.conexion))
             {
-                SqlCommand cmd = new SqlCommand("usp_eliminar", oConexion);
+                SqlCommand cmd = new SqlCommand("ep_eliminar", oConexion);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@idusuario", id);
+                cmd.Parameters.AddWithValue("@id", id);
 
                 try
                 {
+
                     oConexion.Open();
                     cmd.ExecuteNonQuery();
                     return true;
+
                 }
                 catch (Exception ex)
                 {
                     return false;
                 }
             }
+
         }
+
 
     }
 }
